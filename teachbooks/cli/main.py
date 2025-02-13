@@ -1,5 +1,7 @@
 import click
 from pathlib import Path
+from teachbooks.external_git_content import process_external_toc_entries
+
 
 @click.group()
 @click.version_option()
@@ -16,7 +18,7 @@ def main():
 @click.option("--publish", is_flag=True, help="--public is deprecated. Use --release instead.")
 @click.option("--process-only", is_flag=True, help="Only pre-process content")
 @click.pass_context
-def build(ctx, path_source, publish, release, process_only):
+def build(ctx, path_source: str, publish: bool, release: bool, process_only: bool):
     """Pre-process book contents and run Jupyter Book build command"""
     from teachbooks.release import make_release
     from jupyter_book.cli.main import build as jupyter_book_build
@@ -29,7 +31,6 @@ def build(ctx, path_source, publish, release, process_only):
 
     strategy = "release" if release or publish else "draft"
     echo_info(f"running build with strategy '{strategy}'")
-
     path_src_folder = Path(path_source).absolute()
     if release or publish:
         path_conf, path_toc = make_release(path_src_folder)
@@ -40,6 +41,9 @@ def build(ctx, path_source, publish, release, process_only):
     else:
         path_conf = path_src_folder / "_config.yml"
         path_toc = path_src_folder / "_toc.yml"
+
+    # Parse out external git entries from ToC
+    path_toc = process_external_toc_entries(path_toc, path_toc.with_stem("local_toc"))
 
     if not process_only:
         all_args = [str(path_src_folder)]
