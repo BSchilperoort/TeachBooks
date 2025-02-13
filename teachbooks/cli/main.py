@@ -1,6 +1,6 @@
 import click
 from pathlib import Path
-from teachbooks.external_git_content import process_external_toc_entries
+from teachbooks.external_content.process_toc import process_external_toc_entries
 
 
 @click.group()
@@ -43,7 +43,9 @@ def build(ctx, path_source: str, publish: bool, release: bool, process_only: boo
         path_toc = path_src_folder / "_toc.yml"
 
     # Parse out external git entries from ToC
-    path_toc = process_external_toc_entries(path_toc, path_toc.with_stem("local_toc"))
+    path_toc = process_external_toc_entries(
+        path_toc, path_toc.with_stem("local_toc"), book_root=path_src_folder
+    )
 
     if not process_only:
         all_args = [str(path_src_folder)]
