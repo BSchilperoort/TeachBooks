@@ -9,6 +9,7 @@ import yaml
 from teachbooks.external_content import GIT_PATH
 from teachbooks.external_content.git import create_repository_dir_name, get_branch_tag_name, get_repo_url
 from teachbooks.external_content.licenses import validate_licenses
+from teachbooks.external_content.requirements import check_requirements
 from teachbooks.external_content.utils import modify_field
 
 
@@ -43,6 +44,8 @@ def process_external_toc_entries(
     validate_licenses(
         cloned_repos, book_root / GIT_PATH, error_invalid_license
     )
+
+    check_requirements(book_root.parent / "requirements.txt", cloned_repos)
 
     write_toc_yaml(toc, dest)
     return dest

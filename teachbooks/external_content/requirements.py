@@ -1,0 +1,43 @@
+from pathlib import Path
+import warnings
+
+
+def check_requirements(main_requirements: Path, git_repos: list[str]):
+    requirements = read_requirements(main_requirements)
+
+    for repo in git_repos:
+        repo_requirements = read_requirements(Path(repo) / "requirements.txt")
+        unmatched_requirements = repo_requirements - requirements
+        if len(unmatched_requirements) > 0:
+            unmatched_str = "".join(
+                [f"       {req}\n" for req in unmatched_requirements]
+            )
+            warnings.warn(
+                "Requirements mismatch.\n"
+                "Requirements do not match between external content and your book\n"
+                f"    Repository: {repo}\n"
+                "    Missing or non-matching requirements:\n"
+                f"{unmatched_str}"
+                "Content from this book might not display correctly."
+            )
+
+
+def read_requirements(file: Path) -> set[str]:
+    """Read requirements file and strip comments, index urls, and empty lines"""
+    with file.open("r") as f:
+        requirements = f.readlines()
+    
+    valid_requirements = set()
+    for req in requirements:
+        req = req.strip("\n\r")
+
+        if len(req) == 0:
+            pass
+        elif req.startswith("#"):
+            pass
+        elif req.startswith("--"):
+            pass
+        else:
+            valid_requirements.add(req.split(" #")[0])
+
+    return valid_requirements
