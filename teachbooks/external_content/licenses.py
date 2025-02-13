@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import click
+
 
 LICENSE_MAPPING = {
     "MIT License": "MIT",
@@ -28,7 +30,7 @@ def validate_licenses(cloned_repos: list[str], git_path: Path, error: bool):
             if error:
                 raise ValueError(msg)
             else:
-                print("WARNING: {msg}")
+                click.secho(f"WARNING: {msg}", fg="yellow")
 
 
 def find_license(repo_toplevel: str | Path) -> str | None:

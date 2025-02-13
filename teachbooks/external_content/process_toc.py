@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, Dict
 
+import click
 import yaml
 
 from teachbooks.external_content import GIT_PATH
@@ -113,7 +114,7 @@ def external_to_local(
     repository_dir = create_repository_dir_name(external_url, root_dir=external_path)
 
     if os.path.isdir(repository_dir):
-        print(f"{repository_dir} already exists. Not re-downloading")
+        click.secho(f"{repository_dir} already exists. Not re-downloading")
     else:
         # clone with branch_name
         subprocess.run([

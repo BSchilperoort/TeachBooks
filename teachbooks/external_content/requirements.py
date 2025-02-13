@@ -1,5 +1,5 @@
 from pathlib import Path
-import warnings
+import click
 
 
 def check_requirements(main_requirements: Path, git_repos: list[str]):
@@ -12,13 +12,15 @@ def check_requirements(main_requirements: Path, git_repos: list[str]):
             unmatched_str = "".join(
                 [f"       {req}\n" for req in unmatched_requirements]
             )
-            warnings.warn(
-                "Requirements mismatch.\n"
-                "Requirements do not match between external content and your book\n"
+            click.secho(
+                "Warning: requirements do not match between external content "
+                "and your book\n"
                 f"    Repository: {repo}\n"
                 "    Missing or non-matching requirements:\n"
                 f"{unmatched_str}"
-                "Content from this book might not display correctly."
+                "Content from this book might not display correctly.",
+                fg="yellow",
+                err=True,
             )
 
 
