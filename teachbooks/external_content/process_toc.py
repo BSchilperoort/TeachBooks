@@ -26,7 +26,8 @@ def process_external_toc_entries(
     :param dest: Path to the destination table-of-contents yaml file.
     :param fail_invalid_license: If true, and no valid license is found in an
         external repository, an error will be raised. Else only a warning.
-    :return: Path to the new table-of-contents yaml file.
+    :return: Path to the new table-of-contents yaml file, or the original file
+        if the toc was not modified.
     """
     src_toc = parse_toc_yaml(src)
     toc = src_toc.copy()
@@ -39,17 +40,28 @@ def process_external_toc_entries(
         root=book_root,
     )
 
-    with (book_root / GIT_PATH / "cloned_repos.txt").open("r") as f:
-        cloned_repos = [repo.strip("\n\r") for repo in f.readlines()]
+    cloned_repo_log = book_root / GIT_PATH / "cloned_repos.txt"
+    if cloned_repo_log.exists():
+        with cloned_repo_log.open("r") as f:
+            cloned_repos = [repo.strip("\n\r") for repo in f.readlines()]
 
-    validate_licenses(
-        cloned_repos, book_root / GIT_PATH, error_invalid_license
-    )
+        validate_licenses(
+            cloned_repos, book_root / GIT_PATH, error_invalid_license
+        )
 
-    check_requirements(book_root.parent / "requirements.txt", cloned_repos)
+        check_requirements(book_root.parent / "requirements.txt", cloned_repos)
 
-    write_toc_yaml(toc, dest)
-    return dest
+        write_toc_yaml(toc, dest)
+        return dest
+    
+    if toc != src_toc:
+        msg = (
+            "Table of contents has external git content, "
+            "but no git repositories were checked out.\n"
+            "Please fix your table of content or remove any `external` entries"
+        )
+        raise ValueError(msg)
+    return src
 
 
 def get_content_path(url: str) -> str:
