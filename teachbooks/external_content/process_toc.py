@@ -8,10 +8,11 @@ import click
 import yaml
 
 from teachbooks.external_content import GIT_PATH
+from teachbooks.external_content.config import check_plugins
 from teachbooks.external_content.git import create_repository_dir_name, get_branch_tag_name, get_repo_url
 from teachbooks.external_content.licenses import validate_licenses
 from teachbooks.external_content.requirements import check_requirements
-from teachbooks.external_content.utils import modify_field
+from teachbooks.external_content.utils import load_yaml_file, modify_field
 
 
 def process_external_toc_entries(
@@ -29,7 +30,7 @@ def process_external_toc_entries(
     :return: Path to the new table-of-contents yaml file, or the original file
         if the toc was not modified.
     """
-    src_toc = parse_toc_yaml(src)
+    src_toc = load_yaml_file(src)
     toc = src_toc.copy()
 
     toc = modify_field(
@@ -48,8 +49,8 @@ def process_external_toc_entries(
         validate_licenses(
             cloned_repos, book_root / GIT_PATH, error_invalid_license
         )
-
         check_requirements(book_root.parent / "requirements.txt", cloned_repos)
+        check_plugins(book_root / "_config.yml", cloned_repos)
 
         write_toc_yaml(toc, dest)
         return dest
@@ -73,20 +74,6 @@ def get_content_path(url: str) -> str:
     branch_tag_name = get_branch_tag_name(url)
     *_, path = url.split(branch_tag_name)
     return path.strip("/")  # remove leading and trailing "/"
-
-
-def parse_toc_yaml(
-        path: str | Path, encoding: str = "utf8"
-) -> Dict[str, Any]:
-    """Parse the ToC file.
-
-    :param path: `_toc.yml` file path
-    :param encoding: `_toc.yml` file character encoding
-    :return: parsed site map
-    """
-    with open(path, encoding=encoding) as handle:
-        data = yaml.safe_load(handle)
-    return data
 
 
 def write_toc_yaml(

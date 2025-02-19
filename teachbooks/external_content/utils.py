@@ -1,4 +1,7 @@
-from typing import Callable, overload
+from pathlib import Path
+from typing import Any, Callable, Dict, overload
+
+import yaml
 
 
 @overload
@@ -37,4 +40,18 @@ def modify_field(
             }
     elif isinstance(data, list):
         return [modify_field(el, key, func, *args, **kwargs) for el in data]
+    return data
+
+
+def load_yaml_file(
+        path: str | Path, encoding: str = "utf8"
+) -> Dict[str, Any]:
+    """Load a yaml file file (ToC or config) as dictionary.
+
+    :param path: file path
+    :param encoding: file character encoding
+    :return: parsed file
+    """
+    with open(path, encoding=encoding) as handle:
+        data = yaml.safe_load(handle)
     return data
