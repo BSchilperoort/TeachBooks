@@ -1,12 +1,13 @@
 
 from pathlib import Path
+from typing import Any
 
 import click
 
 from teachbooks.external_content.utils import load_yaml_file
 
 
-CLICK_WARNING_KWARGS = {"fg": "yellow", "err": True}
+CLICK_WARNING_KWARGS: dict[str, Any] = {"fg": "yellow", "err": True}
 
 
 def check_plugins(config_file: Path, git_repos: list[str]) -> tuple[set[str], set[str]]:
@@ -21,8 +22,8 @@ def check_plugins(config_file: Path, git_repos: list[str]) -> tuple[set[str], se
     """
     plugins, myst_extensions = find_plugins(config_file)
 
-    missing_plugins = set()
-    missing_extensions = set()
+    missing_plugins: set[str] = set()
+    missing_extensions: set[str] = set()
 
     for repo in git_repos:
         repo_config = find_config(Path(repo))
@@ -72,7 +73,7 @@ def find_config(repo: Path) -> Path | None:
     # book name might be different. Only search one directory level deep:
     detected_configs = list(repo.glob("*/_config.yml"))
     if len(detected_configs) == 1:
-        return next(detected_configs)
+        return detected_configs[0]
     if len(detected_configs) > 1:
         msg = (
             "Warning: more than one config detected in external content repo,\n"

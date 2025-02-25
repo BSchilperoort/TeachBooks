@@ -125,7 +125,7 @@ def external_to_local(
             "git", "clone", "--single-branch", "-b",  branch_tag_name, clone_url,
             repository_dir
         ])
-        with (external_path / "cloned_repos.txt").open("a") as f:
+        with (Path(external_path) / "cloned_repos.txt").open("a") as f:
             f.write(str(repository_dir) + "\n")
 
     content_file = get_content_path(external_url)

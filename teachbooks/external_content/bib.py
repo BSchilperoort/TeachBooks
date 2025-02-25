@@ -128,7 +128,7 @@ def merge_bibs(bibfile: Path, repos: list[str]) -> list[BibEntry]:
     if bibfile.exists():
         book_bib = read_bibfile(bibfile)
     else:
-        book_bib: list[BibEntry] = []
+        book_bib = []
 
     for repo in repos:
         repo_bibfile = find_bibfile(Path(repo))

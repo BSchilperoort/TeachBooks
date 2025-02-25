@@ -10,6 +10,12 @@ def get_repo_url(url: str) -> str:
     """
     pattern = r"https://[^/]+/[^/]+/[^/]+(?=/)"
     match = re.search(pattern, url)
+    if match is None:
+        msg = (
+        "Invalid external content URL. Could not parse repo URL from:\n"
+        f" '{url}'"
+        )
+        raise ValueError(msg)
     return match[0]
 
 
@@ -22,6 +28,13 @@ def get_branch_tag_name(url: str) -> str:
     """
     pattern = r"blob/([^/]+)/"
     match = re.search(pattern, url)
+
+    if match is None:
+        msg = (
+        "Invalid external content URL. Could not retrieve branch/tag name from:\n"
+        f" '{url}'"
+        )
+        raise ValueError(msg)
     return match[1]
 
 
