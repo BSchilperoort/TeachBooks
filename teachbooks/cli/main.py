@@ -1,3 +1,4 @@
+import shutil
 import click
 from pathlib import Path
 from teachbooks.external_content.process_toc import process_external_toc_entries
@@ -85,6 +86,12 @@ def clean(path_source):
             echo_info("Server stopped.")
     except ServerError:
         echo_info("No running server found.")
+
+    # Clean external content
+    gitdir = Path(path_source) / "_git"
+    if gitdir.exists():
+        echo_info(f"Cleaning cloned git repositories in {gitdir}")
+        shutil.rmtree(gitdir, ignore_errors=True)
 
     # Now proceed with cleaning
     echo_info(f"Cleaning build artifacts in {path_source}...")
