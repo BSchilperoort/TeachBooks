@@ -64,27 +64,27 @@ def check_plugins(config_file: Path, git_repos: list[str]) -> tuple[set[str], se
     return missing_plugins, missing_extensions
 
 
-def find_config(dir: Path) -> Path | None:
-    std_config = dir / "book" / "_config.yml"
+def find_config(repo: Path) -> Path | None:
+    std_config = repo / "book" / "_config.yml"
     if std_config.exists():
         return std_config
 
     # book name might be different. Only search one directory level deep:
-    detected_configs = list(dir.glob("*/_config.yml"))
+    detected_configs = list(repo.glob("*/_config.yml"))
     if len(detected_configs) == 1:
         return next(detected_configs)
     if len(detected_configs) > 1:
         msg = (
             "Warning: more than one config detected in external content repo,\n"
             "    could not validate config plugins/extensions."
-            f"    Please check {dir}"
+            f"    Please check {repo}"
         )
         click.secho(msg, **CLICK_WARNING_KWARGS)    
     elif len(detected_configs) == 0:
         msg = (
             "Warning: no config detected in external content repo,\n"
             "    could not validate config plugins/extensions."
-            f"    Please check {dir}"
+            f"    Please check {repo}"
         )
         click.secho(msg, **CLICK_WARNING_KWARGS)    
     return None
