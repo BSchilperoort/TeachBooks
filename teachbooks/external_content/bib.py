@@ -13,7 +13,7 @@ BIB_ENTRY_RE = re.compile(r"@(\w+){([\w:-]+)")
 
 @dataclass
 class BibEntry:
-    """Contains the essential information of a bib entry."""
+    """Contains all information of a bib file entry."""
     entrytype: str
     citekey: str
     content: dict[str,str]
@@ -42,7 +42,7 @@ def read_bibfile(file: Path) -> list[BibEntry]:
 
         content = {}
         for line in e:
-            i_eq = line.find("=")
+            i_eq = line.find("=")  # index of = sign; splits key and value
             if i_eq != -1:
                 key = line[:i_eq].strip()
                 val = line[i_eq+1:]
@@ -103,3 +103,65 @@ def find(citekey: str, bibs: list[BibEntry]) -> BibEntry:
     """Find bib entry by citekey"""
     key_index = [bib.citekey == citekey for bib in bibs].index(True)
     return bibs[key_index]
+
+
+def write_bibfile(file: Path, bibs: list[BibEntry]) -> None:
+    """Write a list of BibEntries to a new file."""
+    with open(file, "w") as f:
+        for bib in bibs:
+            content_strs = [
+                f"  {key} = {{{val}}}" for key, val in bib.content.items()
+            ]
+            entry = (
+                f"@{bib.entrytype}{{{bib.citekey},\n" +\
+                ",\n".join(content_strs) +\
+                ",\n}\n\n"
+            )
+            f.write(entry)
+
+
+def merge_bibs(bibfile: Path, repos: list[str]) -> list[BibEntry]:
+    """Merge the book's .bib file with all external bibs.
+    
+    Will return an empty list if no reference.bib files are present anywhere.
+    """
+    if bibfile.exists():
+        book_bib = read_bibfile(bibfile)
+    else:
+        book_bib: list[BibEntry] = []
+
+    for repo in repos:
+        repo_bibfile = find_bibfile(Path(repo))
+        if repo_bibfile is not None:
+            extra_bibs = read_bibfile(repo_bibfile)
+            book_bib = bib_union(book_bib, extra_bibs)
+    
+    return book_bib
+
+
+def find_bibfile(repo: Path) -> Path | None:
+    """Try to find the references.bib file in the usual locations."""
+    expected_location = repo / "book" / "references.bib"
+    if expected_location.exists():
+        return expected_location
+
+    # main dir might not be named "book"
+    possible_bibs = list(repo.glob("*/references.bib"))
+    if len(possible_bibs) == 0: # bib file might be in subdir
+        possible_bibs = list(repo.glob("*/*/references.bib"))
+    if len(possible_bibs) == 1:
+        return possible_bibs[0]
+    if len(possible_bibs) > 1:
+        msg = (
+            "Warning: more than one references.bib file detected in external\n"
+            "     content repo, could not merge references into main file."
+            f"    Please check {repo}"
+        )
+        click.secho(msg, **CLICK_WARNING_KWARGS)
+    else:
+        msg = (
+            "Warning: no references.bib file detected in external content.\n"
+            f"    Please check {repo}"
+        )
+        click.secho(msg, **CLICK_WARNING_KWARGS)
+    return None

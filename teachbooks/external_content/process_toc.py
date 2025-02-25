@@ -8,6 +8,7 @@ import click
 import yaml
 
 from teachbooks.external_content import GIT_PATH
+from teachbooks.external_content.bib import merge_bibs, write_bibfile
 from teachbooks.external_content.config import check_plugins
 from teachbooks.external_content.git import create_repository_dir_name, get_branch_tag_name, get_repo_url
 from teachbooks.external_content.licenses import validate_licenses
@@ -51,6 +52,10 @@ def process_external_toc_entries(
         )
         check_requirements(book_root.parent / "requirements.txt", cloned_repos)
         check_plugins(book_root / "_config.yml", cloned_repos)
+
+        merged_bibs = merge_bibs(book_root / "references.bib", cloned_repos)
+        write_bibfile(dest.parent / "references.bib", merged_bibs)
+        # TODO: don't overwrite original references.bib file
 
         write_toc_yaml(toc, dest)
         return dest
