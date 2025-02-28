@@ -10,7 +10,7 @@ from teachbooks.external_content.utils import load_yaml_file
 CLICK_WARNING_KWARGS: dict[str, Any] = {"fg": "yellow", "err": True}
 
 
-def check_plugins(config_file: Path, git_repos: list[str]) -> tuple[set[str], set[str]]:
+def check_plugins(config_file: Path, git_repos: list[Path]) -> tuple[set[str], set[str]]:
     """Check external configs for missing plugins/myst extensions and return them.
 
     The user will be warned if any plugins or extensions are missing/not the same
@@ -26,7 +26,7 @@ def check_plugins(config_file: Path, git_repos: list[str]) -> tuple[set[str], se
     missing_extensions: set[str] = set()
 
     for repo in git_repos:
-        repo_config = find_config(Path(repo))
+        repo_config = find_config(repo)
         if repo_config is not None:
             repo_plugins, repo_myst_ext = find_plugins(repo_config)
             unmatched_plugins = repo_plugins - plugins

@@ -2,11 +2,11 @@ from pathlib import Path
 import click
 
 
-def check_requirements(main_requirements: Path, git_repos: list[str]):
+def check_requirements(main_requirements: Path, git_repos: list[Path]):
     requirements = read_requirements(main_requirements)
 
     for repo in git_repos:
-        repo_requirements = read_requirements(Path(repo) / "requirements.txt")
+        repo_requirements = read_requirements(repo / "requirements.txt")
         unmatched_requirements = repo_requirements - requirements
         if len(unmatched_requirements) > 0:
             unmatched_str = "".join(

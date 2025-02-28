@@ -44,9 +44,7 @@ def process_external_toc_entries(
 
     cloned_repo_log = book_root / GIT_PATH / "cloned_repos.txt"
     if cloned_repo_log.exists():
-        with cloned_repo_log.open("r") as f:
-            cloned_repos = [repo.strip("\n\r") for repo in f.readlines()]
-
+        cloned_repos = read_cloned_repos(cloned_repo_log)
         validate_licenses(
             cloned_repos, book_root / GIT_PATH, error_invalid_license
         )
@@ -68,6 +66,15 @@ def process_external_toc_entries(
         )
         raise ValueError(msg)
     return src
+
+
+def read_cloned_repos(log: Path) -> list[Path]:
+    with log.open("r") as f:
+        cloned_repos_str = [repo.strip("\n\r") for repo in f.readlines()]
+    return [
+        Path(repo) if Path(repo).is_absolute() else 
+        log.parent / repo for repo in cloned_repos_str
+    ]
 
 
 def get_content_path(url: str) -> str:

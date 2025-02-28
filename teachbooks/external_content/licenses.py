@@ -20,10 +20,9 @@ LICENSE_MAPPING = {
 }
 
 
-def validate_licenses(cloned_repos: list[str], git_path: Path, error: bool):
+def validate_licenses(cloned_repos: list[Path], git_path: Path, error: bool):
     """Validate if the cloned repositories all have permisive licenses."""
-    for repo in cloned_repos:
-        repo_path = git_path / repo
+    for repo_path in cloned_repos:
         repo_license = find_license(repo_path)
         if repo_license is None:
             msg = f"Could not find a (valid) license in repository {repo_path}"
@@ -42,7 +41,7 @@ def find_license(repo_toplevel: str | Path) -> str | None:
     else:
         msg = (
             f"No license file found in git repository at {repo_toplevel}.\n"
-            "Licenses must be named `LICENSE` or `LICENSE.md`."
+            "Licenses must be named 'LICENSE' or 'LICENSE.md'."
         )
         raise FileNotFoundError(msg)
 
