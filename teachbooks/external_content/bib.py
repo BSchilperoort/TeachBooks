@@ -30,10 +30,11 @@ def read_bibfile(file: Path) -> list[BibEntry]:
 
     entries: list[str] = []
     for line in lines:
-        matches = BIB_ENTRY_RE.match(line)
-        if matches:
-            entries.append("")
-        entries[-1] += line
+        if len(line.strip()) > 0:
+            matches = BIB_ENTRY_RE.match(line)
+            if matches:
+                entries.append("")
+            entries[-1] += line
 
     bib_entries: list[BibEntry] = []
     for entry in entries:
@@ -120,7 +121,7 @@ def write_bibfile(file: Path, bibs: list[BibEntry]) -> None:
             f.write(entry)
 
 
-def merge_bibs(bibfile: Path, repos: list[str]) -> list[BibEntry]:
+def merge_bibs(bibfile: Path, repos: list[Path]) -> list[BibEntry]:
     """Merge the book's .bib file with all external bibs.
     
     Will return an empty list if no reference.bib files are present anywhere.
@@ -131,7 +132,7 @@ def merge_bibs(bibfile: Path, repos: list[str]) -> list[BibEntry]:
         book_bib = []
 
     for repo in repos:
-        repo_bibfile = find_bibfile(Path(repo))
+        repo_bibfile = find_bibfile(repo)
         if repo_bibfile is not None:
             extra_bibs = read_bibfile(repo_bibfile)
             book_bib = bib_union(book_bib, extra_bibs)
