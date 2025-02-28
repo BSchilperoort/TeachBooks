@@ -2,14 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from teachbooks.external_content import GIT_PATH
 from teachbooks.external_content.bib import merge_bibs, read_bibfile, write_bibfile
-from teachbooks.external_content.process_toc import read_cloned_repos
+from tests.test_external_content import BOOK_ROOT
+from tests.test_external_content import CLONED_REPOS
 
-
-BOOK_ROOT = Path(__file__).parent / "book"
-
-CLONED_REPOS = read_cloned_repos(BOOK_ROOT / GIT_PATH / "cloned_repos.txt")
 
 TEST_BIBFILE = Path(__file__).parent / "book/_git/gitlab.tudelft.nl_interactivetextbooks-citg_risk-and-reliability/main/book/_bibliography/references.bib"
 

@@ -52,6 +52,8 @@ sphinx:
     - sphinx.ext.imgconverter
     - download_link_replacer
     - jupyterbook_patches
+    # Fake test plugin for testing reasons:
+    - fake_test_plugin
   # Local extensions are for bibtex (Thirza's hydrology hack); see above
   local_extensions:
     apastyle: _ext/

@@ -30,5 +30,11 @@ sphinx:
     - jupyterbook_patches
     - download_link_replacer
 
+parse:
+  myst_enable_extensions:
+    - amsmath
+    - dollarmath
+    - linkify
+
 bibtex_bibfiles: 
   - references.bib
