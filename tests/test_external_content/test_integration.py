@@ -17,9 +17,17 @@ def cli():
     del runner
 
 def test_build(cli: CliRunner, tmp_path: Path):
-    testdir = shutil.copytree(PATH_TESTDATA, tmp_path / "test")
+    # Copy test book to temp dir
+    testdir: Path = shutil.copytree(PATH_TESTDATA, tmp_path / "test")
     bookdir = testdir / "book"
 
+    # Modify book config to be CI environment compatible
+    config = bookdir / "_config.yml"
+    testconfig = bookdir / "_config.test.yml"
+    config.unlink()
+    testconfig.rename(config)
+
+    # Actually run tests
     build_result = cli.invoke(
         commands.build,
         bookdir.as_posix()
