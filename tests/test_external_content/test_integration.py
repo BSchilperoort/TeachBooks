@@ -16,7 +16,9 @@ def cli():
     yield runner
     del runner
 
-def test_build(cli: CliRunner, tmp_path: Path):
+
+def test_build(cli: CliRunner, tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)  # Fix for windows on CI (otherwise relative dirs fail)
     # Copy test book to temp dir
     testdir: Path = shutil.copytree(PATH_TESTDATA, tmp_path / "test")
     bookdir = testdir / "book"
@@ -36,7 +38,11 @@ def test_build(cli: CliRunner, tmp_path: Path):
 
     indexfile = bookdir / "_build" / "html" / "index.html"
     _gitdir = bookdir / "_git"
-    notebook_page = bookdir / "_build/html/_git/github.com_EXCITED-CO2_workshop_tutorial/v1.0.0/book/ARCO-ERA5.html"
+    notebook_page = (
+        bookdir / "_build" / "html" / "_git" /
+        "github.com_EXCITED-CO2_workshop_tutorial" / "v1.0.0" / "book" /
+        "ARCO-ERA5.html"
+    )
     
     for path in (indexfile, _gitdir, notebook_page):
         assert path.exists()
