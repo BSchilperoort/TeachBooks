@@ -7,7 +7,7 @@ from tests.test_external_content import BOOK_ROOT
 from tests.test_external_content import CLONED_REPOS
 
 
-TEST_BIBFILE = Path(__file__).parent / "book/_git/gitlab.tudelft.nl_interactivetextbooks-citg_risk-and-reliability/main/book/_bibliography/references.bib"
+TEST_BIBFILE = Path(__file__).parent / "testbook/book/_git/gitlab.tudelft.nl_interactivetextbooks-citg_risk-and-reliability/main/book/_bibliography/references.bib"
 
 
 @pytest.fixture

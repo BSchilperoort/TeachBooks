@@ -1,10 +1,13 @@
 from pathlib import Path
+import shutil
 import pytest
 from click.testing import CliRunner
 from teachbooks.cli import main as commands
 
+
 WORK_DIR = Path(__file__).parent / ".teachbooks"
-PATH_BOOK = Path(__file__).parent / "book"
+PATH_TESTDATA = Path(__file__).parent / "testbook"
+
 
 @pytest.fixture()
 def cli():
@@ -13,14 +16,25 @@ def cli():
     yield runner
     del runner
 
-def test_build(cli: CliRunner):
+def test_build(cli: CliRunner, tmp_path: Path):
+    testdir = shutil.copytree(PATH_TESTDATA, tmp_path / "test")
+    bookdir = testdir / "book"
+
     build_result = cli.invoke(
         commands.build,
-        PATH_BOOK.as_posix()
+        bookdir.as_posix()
     )
     assert build_result.exit_code == 0, build_result.output
-    html = PATH_BOOK.joinpath("_build", "html")
-    assert html.joinpath("index.html").exists()
+
+    indexfile = bookdir / "_build" / "html" / "index.html"
+    _gitdir = bookdir / "_git"
+    notebook_page = bookdir / "_build/html/_git/github.com_EXCITED-CO2_workshop_tutorial/v1.0.0/book/ARCO-ERA5.html"
+    
+    for path in (indexfile, _gitdir, notebook_page):
+        assert path.exists()
+
     _ = cli.invoke(commands.clean,
-                   PATH_BOOK.as_posix())
-    assert not html.joinpath("index.html").exists()
+                   bookdir.as_posix())
+
+    assert not indexfile.exists()
+    assert not _gitdir.exists()
