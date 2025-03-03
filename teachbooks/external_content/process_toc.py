@@ -137,5 +137,5 @@ def external_to_local(
 
     content_file = get_content_path(external_url)
     rel_path = os.path.relpath(repository_dir, root)
-    mapping_local["file"] = os.path.join(rel_path, content_file)
+    mapping_local["file"] = os.path.join(rel_path, content_file).replace("\\", "/")
     return mapping_local
