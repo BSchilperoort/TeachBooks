@@ -45,9 +45,9 @@ def find_license(repo_toplevel: str | Path) -> str | None:
         )
         raise FileNotFoundError(msg)
 
-    with license_file.open("r") as f:
+    with license_file.open("r", encoding="utf-8") as f:
         license_content = "".join(f.readlines())
-    
+
     stripped_license = license_content.lower().strip(" \n\r")
 
     detected_license = None
