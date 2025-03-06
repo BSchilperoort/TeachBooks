@@ -45,5 +45,6 @@ The external content links should be formatted like this:
 * or \https://gitlab.domainname.tld/**GROUP**/**SUBGROUP**/**PROJECT**/blob/**TAG**/path/to/file.md
 
 Instead of a ``tag``, it is possible to refer to a branch as well. However, this content
-is not guaranteed to stay the same. Therefore it's best practice to only refer to tags 
-associated with releases.
+is not guaranteed to stay the same (i.e., if the branch is modified with additional commits). 
+Therefore it's best practice to only refer to tags associated with releases, as this will 
+guarantee that the content in your book only changes when you explicitly update the tag.
