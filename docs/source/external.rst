@@ -4,6 +4,8 @@ External content from GitHub/GitLab
 TeachBooks includes an 'external content' processor, where you can refer to meterial
 hosted on GitHub or GitLab, which will be retrieved on-the-fly during the build process.
 
+This feature works consistently when using draft or release build strategies.
+
 Example
 ^^^^^^^
 
@@ -25,7 +27,7 @@ Modify your ``_toc.yml`` file by adding an ``external`` entry:
 Upon running ``teachbooks build book/``, the following will happen:
 
 #. The table of content will be parsed to find any "external" keys.
-#. The git repositories corresponding to the "external" keys will be cloned.
+#. The git repositories corresponding to the "external" keys will be cloned into a subdirectory `_git/`.
 #. The licenses of the repositories are validated. If no (open) license is found, an error is raised.
 #. The ``requirements.txt`` files of the external repositories are checked for any missing values or conflicts.
    If any missing values or conflicts are found, a warning is raised during the build process.
@@ -33,7 +35,10 @@ Upon running ``teachbooks build book/``, the following will happen:
    If any missing plugins/extensions are found, a warning is raised during the build process.
 #. The external repositories are checked for any ``references.bib`` files.
    These are merged together with the main book's ``references.bib`` file.
-#. A new table of content is generated (``local_toc.yml```) which refers to the locally cloned content.
+#. A new table of contents is generated (``local_toc.yml```) which refers to the locally cloned content.
+
+Upon running ``teachbooks clean book/``, the `_git/` subdirectory will be removed 
+(along with the build artifacts).
 
 Notes
 ^^^^^
