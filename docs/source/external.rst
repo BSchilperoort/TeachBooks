@@ -38,7 +38,7 @@ Upon running ``teachbooks build book/``, the following will happen:
 Notes
 ^^^^^
 
-The external content links should be are formatted like:
+The external content links should be formatted like this:
 
 * \https://github.com/**ORGANIZATION**/**REPOSITORY**/blob/**TAG**/path/to/file.md
 * \https://gitlab.domainname.tld/**GROUP**/**PROJECT**/-/blob/**TAG**/path/to/file.md
